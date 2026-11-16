@@ -1,57 +1,50 @@
-# dot_files
+# seoul256-rio
 
-My dotfiles: zsh, Neovim, Alacritty, yazi, and the tools they need. macOS + Homebrew.
+[seoul256](https://github.com/junegunn/seoul256.vim) dark and light themes for the [Rio](https://rioterm.com) terminal.
 
 ## Install
 
-Install [Homebrew](https://brew.sh) first, then:
+Copy the theme files to Rio's themes folder:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/bewa1t/dot_files/main/install.sh | sh
+git clone https://github.com/bewa1t/seoul256-rio ~/.config/rio/themes
 ```
 
-This clones the repo to `~/.dotfiles` (override with `DOT_DIR=...`) and runs:
+If `~/.config/rio/themes` already exists, copy `seoul256.toml` and `seoul256-light.toml` into it instead.
 
-1. `setup/symlinks.sh` – links the configs into place. A real file already at a
-   target is moved to `<target>.backup`.
-2. `setup/install.sh` – installs every tool from `checks/` that's missing.
-3. `setup/theme-sync.sh` – loads the LaunchAgent that switches Alacritty
-   between Catppuccin latte/mocha with macOS light/dark mode.
-4. `setup/menu-bar.sh` – builds `menu-bar-sync` and loads its LaunchAgent. The
-   menu bar hides "Always" with an external display and "In Full Screen Only"
-   without one.
-5. `setup/ai-vim-mode.sh` – turns on vim mode in Claude Code, Codex and Pi
-   (via `pi/modal-editor.ts`) if they're installed and the setting isn't set.
+Then pick a theme in `~/.config/rio/config.toml`:
 
-Every step is safe to re-run, so the same command also updates a machine.
-After that, a new shell runs these steps by itself whenever the checked-out
-commit changes (e.g. after `git pull`), and retries them if one failed. Delete
-`~/.local/state/dotfiles/setup-done` to force a re-run.
+```toml
+theme = "seoul256"
+```
 
-## Layout
+Or follow the macOS light/dark mode:
 
-| Path | What |
-|---|---|
-| `zshrc.zsh` | `~/.zshrc`: runs the checks, then sources each `setup/*.zsh` |
-| `checks/` | One file per tool group. Each line is `tool <name> <default path> <install command>`. Missing tools print a warning on shell start. |
-| `setup/*.zsh` | Shell setup, one file per tool. Each skips itself if its tool is missing. |
-| `setup/*.sh` | The install steps above (run by hand or by `install.sh`). |
-| `env/` | `~/.env`: local env vars and secrets. `*.sh` is git-ignored. |
-| `aliases/` | `~/.aliases`: local aliases. `*.sh` is git-ignored. |
-| `alacritty/`, `rio/`, `nvim/`, `yazi/` | App configs, linked into `~/.config/` |
-| `rio/themes/` | Copy of [bewa1t/seoul256-rio](https://github.com/bewa1t/seoul256-rio) (seoul256 dark/light), added with `git subtree`, so clone and pull include it. Get a new version: `git subtree pull --prefix rio/themes https://github.com/bewa1t/seoul256-rio main --squash` |
-| `herdr/config.toml` | herdr config, linked as `~/.config/herdr/config.toml` (only the file) |
-| `git/` | `~/.config/git`: shared git defaults (Neovim as editor and merge tool) and global ignore. Name and email stay in `~/.gitconfig`. |
-| `theme-sync/` | Light/dark theme switcher + its LaunchAgent template |
-| `utils/menu_bar/` | Watcher that modifies menu bar hide options on MacBooks |
+```toml
+[adaptive-theme]
+light = "seoul256-light"
+dark = "seoul256"
+```
 
-## Local-only files
+## Colors
 
-`env/*.sh` and `aliases/*.sh` never get committed. Put machine-specific
-settings there, e.g. `env/cpp_setup.sh` or `aliases/personal.sh`.
+All colors come from the default color map of seoul256.vim (not the xterm
+palette), so the terminal background matches Vim and Neovim with
+`termguicolors` exactly:
 
-## Adding a tool
+| | dark | light |
+|---|---|---|
+| background | `#4B4B4B` (237) | `#E1E1E1` (253) |
+| foreground | `#D9D9D9` (252) | `#616161` (239) |
 
-1. Add a `tool` line to a file in `checks/`.
-2. If it needs shell setup, add `setup/<tool>.zsh` starting with
-   `has <name> <default path> || return 0`, and source it from `zshrc.zsh`.
+- The 16 ANSI colors use the same seoul256 color numbers as the
+  [ghostty](https://github.com/jcmorrow/seoul256-ghostty) and
+  [kitty](https://github.com/ubmit/seoul256-kitty) ports.
+- Selection and search use the colors of Vim's `Visual`, `Search` and
+  `IncSearch` groups. Tab titles and split borders use `TabLine`,
+  `TabLineSel` and `VertSplit`.
+- The dim foreground is halfway between the foreground and the background.
+
+## License
+
+MIT. The colors are from seoul256.vim, Copyright (c) 2017 Junegunn Choi.
